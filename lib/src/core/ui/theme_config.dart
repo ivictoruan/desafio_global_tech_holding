@@ -8,6 +8,13 @@ class ThemeConfig {
       ),
       useMaterial3: true,
     ).copyWith(
+      appBarTheme: const AppBarTheme(
+        titleTextStyle: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+          color: Colors.black,
+        ),
+      ),
       dividerTheme: const DividerThemeData(space: 24),
       chipTheme: const ChipThemeData(
         shape: StadiumBorder(

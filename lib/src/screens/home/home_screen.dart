@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'home/widgets/proposal_card_widget.dart';
-import 'home/widgets/feature_card_widget.dart';
-import 'home/widgets/banner_widget.dart';
+import '../question/question_screen.dart';
+import 'widgets/proposal_card_widget.dart';
+import 'widgets/feature_card_widget.dart';
+import 'widgets/banner_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -37,7 +38,23 @@ class HomeScreen extends StatelessWidget {
               CircleAvatar(
                 child: Text("EN"),
               ),
-              Icon(Icons.search, color: Colors.black),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      constraints: BoxConstraints(
+                        maxHeight: 36,
+                      ),
+                      hintText: 'Buscar',
+                      contentPadding: EdgeInsets.only(left: 8),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+              ),
+              // TODO: ajustar tamanho e estilo da notificação
+              Icon(Icons.circle_notifications, color: Colors.black),
             ],
           ),
         ),
@@ -52,11 +69,10 @@ class HomeScreen extends StatelessWidget {
                   width: double.infinity,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
-                    children: const [
-                      BannerWidget(),
-                      BannerWidget(),
-                      BannerWidget(),
-                    ],
+                    children: List.generate(
+                      6,
+                      (_) => const BannerWidget(),
+                    ),
                   ),
                 ),
                 const Divider(),
@@ -74,18 +90,38 @@ class HomeScreen extends StatelessWidget {
                   childAspectRatio: 3 / 2,
                   crossAxisSpacing: 8,
                   mainAxisSpacing: 8,
-                  children: features
-                      .map(
-                        (feature) => FeatureCardWidget(
-                          icon: feature['icon'] as IconData,
-                          label: feature['label'] as String,
-                          backgroundColor:
-                              (feature['label'] as String) == 'Promoções'
-                                  ? Colors.white
-                                  : null,
-                        ),
-                      )
-                      .toList(),
+                  children: features.map(
+                    (Map<String, Object> feature) {
+                      final bool isPromotion =
+                          (feature['label'] as String) == 'Empréstimos';
+
+                      if (isPromotion) {
+                        return InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const QuestionsScreen(
+                                  featureName: 'Empréstimos',
+                                ),
+                              ),
+                            );
+                          },
+                          child: FeatureCardWidget(
+                            icon: feature['icon'] as IconData,
+                            label: feature['label'] as String,
+                          ),
+                        );
+                      }
+                      return FeatureCardWidget(
+                        icon: feature['icon'] as IconData,
+                        label: feature['label'] as String,
+                        backgroundColor:
+                            (feature['label'] as String) == 'Promoções'
+                                ? Colors.white
+                                : null,
+                      );
+                    },
+                  ).toList(),
                 ),
               ],
             ),
