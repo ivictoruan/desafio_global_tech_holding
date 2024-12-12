@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'option.dart';
 
 class Question {
@@ -12,4 +14,18 @@ class Question {
     this.value,
     this.optionsList,
   });
+
+  Question copyWith({
+    String? name,
+    int? type,
+    ValueGetter<String?>? value,
+    ValueGetter<List<Option>?>? optionsList,
+  }) {
+    return Question(
+      name: name ?? this.name,
+      type: type ?? this.type,
+      value: value != null ? value() : this.value,
+      optionsList: optionsList != null ? optionsList() : this.optionsList,
+    );
+  }
 }

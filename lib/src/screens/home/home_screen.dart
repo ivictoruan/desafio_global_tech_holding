@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../question/question_screen.dart';
+import '../../core/app_routes.dart';
 import 'widgets/proposal_card_widget.dart';
 import 'widgets/feature_card_widget.dart';
 import 'widgets/banner_widget.dart';
@@ -64,17 +64,7 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 100,
-                  width: double.infinity,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: List.generate(
-                      6,
-                      (_) => const BannerWidget(),
-                    ),
-                  ),
-                ),
+                _buildBanners(),
                 const Divider(),
                 const ProposalCardWidget(),
                 const Divider(),
@@ -83,46 +73,7 @@ class HomeScreen extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 const SizedBox(height: 8),
-                GridView.count(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  childAspectRatio: 3 / 2,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  children: features.map(
-                    (Map<String, Object> feature) {
-                      final bool isPromotion =
-                          (feature['label'] as String) == 'Empréstimos';
-
-                      if (isPromotion) {
-                        return InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const QuestionsScreen(
-                                  featureName: 'Empréstimos',
-                                ),
-                              ),
-                            );
-                          },
-                          child: FeatureCardWidget(
-                            icon: feature['icon'] as IconData,
-                            label: feature['label'] as String,
-                          ),
-                        );
-                      }
-                      return FeatureCardWidget(
-                        icon: feature['icon'] as IconData,
-                        label: feature['label'] as String,
-                        backgroundColor:
-                            (feature['label'] as String) == 'Promoções'
-                                ? Colors.white
-                                : null,
-                      );
-                    },
-                  ).toList(),
-                ),
+                _buildFeatureCards(context),
               ],
             ),
           ),
@@ -138,5 +89,57 @@ class HomeScreen extends StatelessWidget {
               )
               .toList(),
         ),
+      );
+
+  void goToLoanScreen(context) {
+    Navigator.of(context).pushNamed(
+      AppRoutes.questions,
+      arguments: {
+        'featureName': 'Empréstimos',
+      },
+    );
+  }
+
+  Widget _buildBanners() => SizedBox(
+        height: 100,
+        width: double.infinity,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: List.generate(
+            6,
+            (_) => const BannerWidget(),
+          ),
+        ),
+      );
+
+  Widget _buildFeatureCards(context) => GridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: 2,
+        childAspectRatio: 3 / 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        children: features.map(
+          (feature) {
+            final bool isLoan = (feature['label'] as String) == 'Empréstimos';
+
+            if (isLoan) {
+              return InkWell(
+                onTap: () => goToLoanScreen(context),
+                child: FeatureCardWidget(
+                  icon: feature['icon'] as IconData,
+                  label: feature['label'] as String,
+                ),
+              );
+            }
+            return FeatureCardWidget(
+              icon: feature['icon'] as IconData,
+              label: feature['label'] as String,
+              backgroundColor: (feature['label'] as String) == 'Promoções'
+                  ? Colors.white
+                  : null,
+            );
+          },
+        ).toList(),
       );
 }
